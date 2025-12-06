@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de Tamaño de Posición (Banner)</title>
+    <style>
+        /* -------------------------------------- */
+        /* 1. Definición de Variables de Color */
+        /* -------------------------------------- */
+
+        /* MODO LIGHT (Valores predeterminados) */
+        :root {
+            --bg-principal: #f0f2f5;          /* Fondo de la página */
+            --bg-calculadora: #ffffff;        /* Fondo del contenedor de la calculadora */
+            --color-texto-principal: #111;    /* Color del texto del resultado */
+            --color-texto-secundario: #555;   /* Color de etiquetas y texto normal */
+            --color-borde-input: #ccc;        /* Borde de los campos de entrada */
+            --color-separador: #e0e0e0;       /* Separador visual */
+            --color-boton-toggle: #e0e0e0;    /* Fondo del botón de cambio de modo */
+            --color-boton-toggle-hover: #cccccc;
+        }
+
+        /* MODO DARK */
+        .dark-mode {
+            --bg-principal: #1a1a1a;
+            --bg-calculadora: #2d2d2d;
+            --color-texto-principal: #ffffff;
+            --color-texto-secundario: #a9a9a9;
+            --color-borde-input: #555;
+            --color-separador: #444;
+            --color-boton-toggle: #444444;
+            --color-boton-toggle-hover: #555555;
+        }
+
+        /* -------------------------------------- */
+        /* 2. Estilos Generales con Variables */
+        /* -------------------------------------- */
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: var(--bg-principal);
+            transition: background-color 0.3s ease; 
+        }
+
+        /* Contenedor Principal del Banner */
+        .calculator-container {
+            width: 1280px;
+            height: 150px;
+            background-color: var(--bg-calculadora);
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+            padding: 0 40px;
+            box-sizing: border-box;
+            transition: background-color 0.3s ease, box-shadow 0.3s ease; 
+        }
+
+        .dark-mode .calculator-container {
+             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+        }
+
+        /* Contenedor para los campos de entrada */
+        .inputs-wrapper {
+            display: flex;
+            gap: 30px;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--color-texto-secundario);
+            margin-bottom: 8px;
+            transition: color 0.3s ease;
+        }
+
+        input[type="number"] {
+            font-size: 16px;
+            padding: 8px 12px;
+            border: 1px solid var(--color-borde-input);
+            border-radius: 6px;
+            width: 140px;
+            transition: border-color 0.2s, box-shadow 0.2s, background-color 0.3s, color 0.3s;
+            background-color: var(--bg-calculadora);
+            color: var(--color-texto-secundario);
+        }
+
+        input[type="number"]:focus {
+            outline: none;
+            border-color: #007aff;
+            box-shadow: 0 0 0 2px rgba(0, 122, 255, 0.2);
+        }
+        
+        /* Botón de Cálculo */
+        #calculateBtn {
+            font-size: 16px;
+            font-weight: 600;
+            color: #fff;
+            background-color: #007aff;
+            border: none;
+            border-radius: 8px;
+            padding: 12px 30px;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+
+        #calculateBtn:hover {
+            background-color: #005ecb;
+        }
+        
+        /* Botón de Toggle de Tema (Integrado en el banner) */
+        #theme-toggle {
+            font-size: 14px; 
+            padding: 10px 18px;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            background-color: var(--color-boton-toggle);
+            color: var(--color-texto-secundario);
+            transition: background-color 0.3s ease, color 0.3s ease;
+            margin: 0 10px; /* Pequeño margen para separarlo del botón Calcular */
+        }
+
+        #theme-toggle:hover {
+            background-color: var(--color-boton-toggle-hover);
+        }
+
+        .dark-mode #theme-toggle {
+            color: var(--color-texto-principal);
+        }
+
+
+        /* Separador Visual */
+        .separator {
+            width: 1px;
+            height: 60%;
+            background-color: var(--color-separador);
+            transition: background-color 0.3s ease;
+        }
+
+        /* Contenedor para los resultados */
+        .results-wrapper {
+            display: flex;
+            gap: 40px;
+            text-align: left;
+        }
+        
+        .result-box {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .result-label {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--color-texto-secundario);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            transition: color 0.3s ease;
+        }
+
+        .result-value {
+            font-size: 28px;
+            font-weight: 600;
+            color: var(--color-texto-principal);
+            transition: color 0.3s ease;
+        }
+    </style>
+</head>
+<body>
+    <div class="calculator-container">
+        <div class="inputs-wrapper">
+            <div class="input-group">
+                <label for="balance">Balance de Cuenta ($)</label>
+                <input type="number" id="balance" value="10000">
+            </div>
+            <div class="input-group">
+                <label for="risk">Riesgo (%)</label>
+                <input type="number" id="risk" value="1" step="0.1">
+            </div>
+            <div class="input-group">
+                <label for="stopLoss">Stop Loss (pips)</label>
+                <input type="number" id="stopLoss" value="25" step="1">
+            </div>
+        </div>
+        
+        <button id="calculateBtn">Calcular</button>
+
+        <button id="theme-toggle">Modo Dark 🌙</button>
+
+        <div class="separator"></div>
+
+        <div class="results-wrapper">
+            <div class="result-box">
+                <span class="result-label">Riesgo Total</span>
+                <span class="result-value"><span id="riskAmount">0.00</span> $</span>
+            </div>
+            <div class="result-box">
+                <span class="result-label">Tamaño Posición</span>
+                <span class="result-value"><span id="positionSize">0.00</span> lots</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Referencias a los elementos del DOM de la CALCULADORA
+            const balanceInput = document.getElementById('balance');
+            const riskInput = document.getElementById('risk');
+            const stopLossInput = document.getElementById('stopLoss');
+            const calculateBtn = document.getElementById('calculateBtn');
+            const riskAmountSpan = document.getElementById('riskAmount');
+            const positionSizeSpan = document.getElementById('positionSize');
+
+            // Referencias a los elementos del DOM del TEMA
+            const themeToggleBtn = document.getElementById('theme-toggle');
+            const body = document.body;
+
+            // ----------------------------------------------------
+            // LÓGICA DE MODO CLARO/OSCURO
+            // ----------------------------------------------------
+
+            function updateToggleText(isDarkMode) {
+                themeToggleBtn.textContent = isDarkMode ? 'Modo Light ☀️' : 'Modo Dark 🌙';
+            }
+
+            function loadTheme() {
+                const savedTheme = localStorage.getItem('theme');
+                if (savedTheme === 'dark') {
+                    body.classList.add('dark-mode');
+                    updateToggleText(true);
+                } else {
+                    // Por defecto es Light Mode
+                    updateToggleText(false);
+                }
+            }
+
+            function toggleTheme() {
+                const isDarkMode = body.classList.toggle('dark-mode');
+                
+                if (isDarkMode) {
+                    localStorage.setItem('theme', 'dark');
+                } else {
+                    localStorage.setItem('theme', 'light');
+                }
+                updateToggleText(isDarkMode);
+            }
+
+            // Cargar el tema al inicio
+            loadTheme();
+
+            // Event Listener para cambiar el tema
+            themeToggleBtn.addEventListener('click', toggleTheme);
+
+            // ----------------------------------------------------
+            // LÓGICA DE LA CALCULADORA
+            // ----------------------------------------------------
+            function calculatePositionSize() {
+                const balance = parseFloat(balanceInput.value);
+                const riskPercent = parseFloat(riskInput.value);
+                const stopLossPips = parseFloat(stopLossInput.value);
+
+                // Validación para evitar errores
+                if (isNaN(balance) || isNaN(riskPercent) || isNaN(stopLossPips) || stopLossPips <= 0) {
+                    riskAmountSpan.textContent = '---';
+                    positionSizeSpan.textContent = '---';
+                    return;
+                }
+
+                // Fórmulas de Cálculo
+                const riskAmount = balance * (riskPercent / 100);
+                const valuePerPip = riskAmount / stopLossPips;
+                const pipValuePerStandardLot = 10; // Asumiendo $10/pip para 1 lote estándar
+                const positionSize = valuePerPip / pipValuePerStandardLot;
+
+                // Actualizar la interfaz
+                riskAmountSpan.textContent = riskAmount.toFixed(2);
+                positionSizeSpan.textContent = positionSize.toFixed(3);
+            }
+
+            // Event Listeners
+            calculateBtn.addEventListener('click', calculatePositionSize);
+            
+            // También calcula en tiempo real al cambiar cualquier valor
+            balanceInput.addEventListener('input', calculatePositionSize);
+            riskInput.addEventListener('input', calculatePositionSize);
+            stopLossInput.addEventListener('input', calculatePositionSize);
+
+            // Realizar el primer cálculo al cargar la página
+            calculatePositionSize();
+        });
+    </script>
+</body>
+</html>
